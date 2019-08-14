@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>bing Demo</title>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="D:/ext-3.3.0/resources/css/ext-all.css" />
+    <script type="text/javascript" src="D:/ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="D:/ext-3.3.0/ext-all.js"></script>
+    <style>
+        ul.x-tab-strip {
+            display: block;
+            width: 555px;
+            zoom: 1;
+        }
+
+        .bingStyle {
+            margin: 25px 25px 0 0;
+        }
+
+        .x-table-layout {
+            position: absolute;
+            top: 20%;
+            left: calc(50vw - 688px);
+        }
+
+        .inputFontSize {
+            height: 50px !important;
+            width: 650px !important;
+            font: 18px/normal 'Microsoft YaHei', Arial, Helvetica, sans-serif;
+        }
+
+        .x-btn-tl,
+        .x-btn-tr,
+        .x-btn-tc,
+        .x-btn-ml,
+        .x-btn-mr,
+        .x-btn-mc,
+        .x-btn-bl,
+        .x-btn-br,
+        .x-btn-bc {
+            background-image: none
+        }
+
+        .x-btn-icon .x-btn-small .x-btn-text {
+            position: absolute;
+            height: 30px;
+            width: 30px;
+            left: 762px;
+        }
+
+        .search {
+            position: absolute;
+            left: 655px;
+        }
+
+        ul.x-tab-strip li {
+            margin-left: 0px;
+        }
+
+        .x-tab-strip-spacer {
+            display: none
+        }
+
+        .x-tab-strip-top .x-tab-right,
+        .x-tab-strip-top .x-tab-left,
+        .x-tab-strip-top .x-tab-strip-inner {
+            background-image: none !important;
+            background-color: #a7bda6
+        }
+
+        .x-form-text,
+        textarea.x-form-field {
+            background-image: none;
+            border: none
+        }
+
+        .x-tab-panel-bwrap {
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+            border-bottom-left-radius: 6px;
+        }
+
+        .x-tab-strip span.x-tab-strip-text {
+            font: normal 11px tahoma, arial, helvetica;
+            color: #444;
+            font-size: 16px;
+            font-family: 'Microsoft YaHei', Arial, Helvetica, sans-serif;
+        }
+
+        .x-tab-strip-active span.x-tab-strip-text {
+            color: #15428b;
+            font-size: 16px;
+            font-family: 'Microsoft YaHei', Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <script type="text/javascript">
+        Ext.onReady(function () {
+            let domesticValue = '';
+            let foreignValue = '';
+            let container = new Ext.Container({
+                renderTo: 'test',
+                layout: 'table',
+                layoutConfig: {
+                    columns: 3
+                },
+                items: [{
+                    rowspan: 2,
+                    height: 50,
+                    cls: 'bingStyle',
+                    xtype: 'box',
+                    autoEl: {
+                        tag: 'img',
+                        src: 'bing-logo.png'
+                    }
+
+                },
+                {
+                    xtype: 'tabpanel',
+                    id: 'tabBing',
+                    activeTab: 0,
+                    plain: true,
+                    border: false,
+                    items: [{
+                        id: 'domestic',
+                        xtype: 'textfield',
+                        height: 50,
+                        title: '国内版',
+                        listeners: {
+                            change: function (field, newValue, oldValue) {
+                                domesticValue = newValue;
+                            },
+                            specialkey: function (field, e) {
+                                if (e.getKey() == Ext.EventObject.ENTER) {
+                                    window.location.href = "https://cn.bing.com/search?q=" + field.getValue();
+                                }
+                            },
+                        }
+                    }, {
+                        id: 'foreign',
+                        xtype: 'textfield',
+                        height: 50,
+                        title: '国际版',
+                        listeners: {
+                            change: function (field, newValue, oldValue) {
+                                foreignValue = newValue;
+                            },
+                            specialkey: function (field, e) {
+                                if (e.getKey() == Ext.EventObject.ENTER) {
+                                    window.location.href = "https://cn.bing.com/search?q=" + field.getValue() + '&ensearch=1&FORM=BEHPTB';
+                                }
+                            }
+                        }
+                    },
+                    ],
+                },
+                {
+                    id: 'searchSource',
+                    xtype: 'button',
+                    icon: 'search.PNG',
+                    iconCls: 'search',
+                }
+                ]
+            })
+            Ext.getCmp('domestic').addClass('inputFontSize');
+            Ext.getCmp('foreign').addClass('inputFontSize');
+            Ext.getCmp('searchSource').on('click', function (params) {
+                if (Ext.getCmp('tabBing').getActiveTab().id == "domestic") {
+                    window.location.href = "https://cn.bing.com/search?q=" + domesticValue;
+                } else {
+                    window.location.href = "https://cn.bing.com/search?q=" + foreignValue + '&ensearch=1&FORM=BEHPTB';
+                }
+            });
+        })
+    </script>
+</head>
+
+<body background="./bing.jpg">
+    <div id="test"></div>
+</body>
+
+</html>
