@@ -11,6 +11,9 @@
         * {
             font-size: 12px;
         }
+        .inputStyle{
+            widows: 56px !important;
+        }
     </style>
     <script type="text/javascript">
         Ext.onReady(function () {
@@ -19,7 +22,7 @@
             const harmfulgarbage = "有害垃圾";
             const recyclable = "可回收物";
             let selectQuestion1Answer = '';
-            let selectQuestion2Answer = '';
+            let selectQuestion2Answer = [];
             var navHandler = function (direction) {
 
                 var wizard = Ext.getCmp('wizard').layout;
@@ -107,7 +110,7 @@
                         width: 200,
                         title: 'Q50: 王大叔出门遛狗后,哪些是正确处理狗粑粑的方法?(多选)',
                         items: [{
-                            id: 'question2',
+                            id: 'question50',
                             xtype: 'checkboxgroup',
                             border: false,
                             itemCls: 'x-check-group-alt',
@@ -116,7 +119,11 @@
                             defaults: {
                                 listeners: {
                                     'change': function (field, newValue, oldValue) {
-                                        selectQuestion2Answer = Ext.getCmp('question2').getValue();
+                                        selectQuestion2Answer = []
+                                        Ext.getCmp('question50').getValue().forEach(element => {
+                                            selectQuestion2Answer.push(element.boxLabel);    
+                                        });
+                                        Ext.getCmp('answer50').setValue(selectQuestion2Answer.join('\n\n'));
                                     },
                                 }
                             },
@@ -128,13 +135,20 @@
                         defaultType: 'textfield',
                         labelAlign: 'center',
                         title: '确认答案',
-                        labelWidth: 50,
+                        labelWidth: 56,
                         frame: true,
                         width: 300,
                         items: [{
                             id:'answer1',
                             disabled:true,
-                            fieldLabel: 'question1-answer'
+                            anchor:'80%',
+                            fieldLabel: '1-answer'
+                        },{
+                            id:'answer50',
+                            xtype:'textarea',
+                            anchor:'80% 60%',
+                            disabled:true,
+                            fieldLabel: '2-answer'
                         }],
                         buttons: [{
                             text: 'submit',
