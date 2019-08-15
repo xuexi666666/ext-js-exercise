@@ -14,6 +14,10 @@
     </style>
     <script type="text/javascript">
         Ext.onReady(function () {
+            const wetgarbage = "湿垃圾";
+            const drygarbage = "干垃圾";
+            const harmfulgarbage = "有害垃圾";
+            const recyclable = "可回收物";
             var navHandler = function (direction) {
 
                 var wizard = Ext.getCmp('wizard').layout;
@@ -42,12 +46,15 @@
                 }
             };
 
-            var viewport = new Ext.Viewport({
+            var viewport = new Ext.Window({
                 layout: 'border',
+                width: 300,
+                height: 300,
                 items: [{
-                    region: 'west',
                     id: 'wizard',
+                    region: 'center',
                     width: 200,
+                    height: 200,
                     title: '垃圾分类答题卡',
                     layout: 'card',
                     activeItem: 0,
@@ -67,21 +74,40 @@
                     }],
                     items: [{
                         id: 'card-0',
-                        html: '第1题'
+                        xtype: 'form',
+                        labelWidth: 50,
+                        frame: true,
+                        width: 100,
+                        title: 'Q1: 番茄酱属于以下哪种垃圾?（单选）',
+                        items: [{
+                            xtype: 'fieldset',
+                            border: false,
+                            defaultType: 'radio',
+                            items: [{ boxLabel: wetgarbage, name: 'GarbageClass', inputValue: wetgarbage},
+                            { boxLabel: drygarbage, name: 'GarbageClass', inputValue: drygarbage},
+                            { boxLabel: harmfulgarbage, name: 'GarbageClass', inputValue: harmfulgarbage},
+                            { boxLabel: recyclable, name: 'GarbageClass', inputValue: recyclable}]
+                        }]
                     }, {
                         id: 'card-1',
-                        html: '第50题'
+                        xtype: 'form',
+                        labelWidth: 50,
+                        frame: true,
+                        width: 100,
+                        title: 'Q1: 番茄酱属于以下哪种垃圾?（单选）',
+                        items: [{
+                            xtype: 'fieldset',
+                            border: false,
+                            defaultType: 'checkbox',
+                            items: [{ boxLabel: '湿垃圾' }, { boxLabel: '干垃圾' }, { boxLabel: '有害垃圾' }, { boxLabel: '可回收物' }]
+                        }]
                     }, {
                         id: 'card-2',
                         html: '答题结束'
                     }]
-                }, {
-                    region: 'center',
-                    split: true,
-                    border: true
                 }]
             });
-
+            viewport.show();
         });
     </script>
 </head>
