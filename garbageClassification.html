@@ -18,6 +18,8 @@
             const drygarbage = "干垃圾";
             const harmfulgarbage = "有害垃圾";
             const recyclable = "可回收物";
+            let selectQuestion1Answer = '';
+            let selectQuestion2Answer = '';
             var navHandler = function (direction) {
 
                 var wizard = Ext.getCmp('wizard').layout;
@@ -48,13 +50,13 @@
 
             var viewport = new Ext.Window({
                 layout: 'border',
-                width: 300,
-                height: 300,
+                width: 400,
+                height: 400,
                 items: [{
                     id: 'wizard',
                     region: 'center',
-                    width: 200,
-                    height: 200,
+                    width: 300,
+                    height: 300,
                     title: '垃圾分类答题卡',
                     layout: 'card',
                     activeItem: 0,
@@ -77,33 +79,46 @@
                         xtype: 'form',
                         labelWidth: 50,
                         frame: true,
-                        width: 100,
+                        width: 200,
                         title: 'Q1: 番茄酱属于以下哪种垃圾?（单选）',
                         items: [{
                             xtype: 'fieldset',
                             border: false,
                             defaultType: 'radio',
-                            items: [{ boxLabel: wetgarbage, name: 'GarbageClass', inputValue: wetgarbage},
-                            { boxLabel: drygarbage, name: 'GarbageClass', inputValue: drygarbage},
-                            { boxLabel: harmfulgarbage, name: 'GarbageClass', inputValue: harmfulgarbage},
-                            { boxLabel: recyclable, name: 'GarbageClass', inputValue: recyclable}]
+                            defaults: {
+                                listeners: {
+                                    'change': function (newValue, oldValue) {
+                                        console.log(newValue);
+                                    },
+                                }
+                            },
+                            items: [{ boxLabel: wetgarbage, name: 'GarbageClass', inputValue: wetgarbage },
+                            { boxLabel: drygarbage, name: 'GarbageClass', inputValue: drygarbage },
+                            { boxLabel: harmfulgarbage, name: 'GarbageClass', inputValue: harmfulgarbage },
+                            { boxLabel: recyclable, name: 'GarbageClass', inputValue: recyclable }]
                         }]
                     }, {
                         id: 'card-1',
                         xtype: 'form',
                         labelWidth: 50,
                         frame: true,
-                        width: 100,
-                        title: 'Q1: 番茄酱属于以下哪种垃圾?（单选）',
+                        width: 200,
+                        title: 'Q50: 王大叔出门遛狗后,哪些是正确处理狗粑粑的方法?(多选)',
                         items: [{
                             xtype: 'fieldset',
                             border: false,
                             defaultType: 'checkbox',
-                            items: [{ boxLabel: '湿垃圾' }, { boxLabel: '干垃圾' }, { boxLabel: '有害垃圾' }, { boxLabel: '可回收物' }]
+                            defaults: {
+                                listeners: {
+                                    'change': function (newValue, oldValue) {
+                                        console.log(newValue);
+                                    },
+                                }
+                            },
+                            items: [{ boxLabel: '把粑粑用废报纸包好带回家冲掉' }, { boxLabel: '受污染的报纸按有害垃圾处理' }, { boxLabel: '没污染的报纸按可回收垃圾处理' }, { boxLabel: '受污染的报纸浸水后当湿垃圾处理' }]
                         }]
                     }, {
-                        id: 'card-2',
-                        html: '答题结束'
+                        id: 'card-2'
                     }]
                 }]
             });
