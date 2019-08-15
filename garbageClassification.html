@@ -82,13 +82,14 @@
                         width: 200,
                         title: 'Q1: 番茄酱属于以下哪种垃圾?（单选）',
                         items: [{
+                            id: 'question1',
                             xtype: 'fieldset',
                             border: false,
                             defaultType: 'radio',
                             defaults: {
                                 listeners: {
-                                    'change': function (newValue, oldValue) {
-                                        console.log(newValue);
+                                    'change': function (field, newValue, oldValue) {
+                                        selectQuestion1Answer = field.inputValue;
                                     },
                                 }
                             },
@@ -105,13 +106,16 @@
                         width: 200,
                         title: 'Q50: 王大叔出门遛狗后,哪些是正确处理狗粑粑的方法?(多选)',
                         items: [{
-                            xtype: 'fieldset',
+                            id: 'question2',
+                            xtype: 'checkboxgroup',
                             border: false,
+                            itemCls: 'x-check-group-alt',
                             defaultType: 'checkbox',
+                            columns: 1,
                             defaults: {
                                 listeners: {
-                                    'change': function (newValue, oldValue) {
-                                        console.log(newValue);
+                                    'change': function (field, newValue, oldValue) {
+                                        selectQuestion2Answer = Ext.getCmp('question2').getValue();
                                     },
                                 }
                             },
