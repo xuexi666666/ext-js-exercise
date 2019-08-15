@@ -90,6 +90,7 @@
                                 listeners: {
                                     'change': function (field, newValue, oldValue) {
                                         selectQuestion1Answer = field.inputValue;
+                                        Ext.getCmp('answer1').setValue(selectQuestion1Answer);
                                     },
                                 }
                             },
@@ -122,7 +123,27 @@
                             items: [{ boxLabel: '把粑粑用废报纸包好带回家冲掉' }, { boxLabel: '受污染的报纸按有害垃圾处理' }, { boxLabel: '没污染的报纸按可回收垃圾处理' }, { boxLabel: '受污染的报纸浸水后当湿垃圾处理' }]
                         }]
                     }, {
-                        id: 'card-2'
+                        id: 'card-2',
+                        xtype: 'form',
+                        defaultType: 'textfield',
+                        labelAlign: 'center',
+                        title: '确认答案',
+                        labelWidth: 50,
+                        frame: true,
+                        width: 300,
+                        items: [{
+                            id:'answer1',
+                            disabled:true,
+                            fieldLabel: 'question1-answer'
+                        }],
+                        buttons: [{
+                            text: 'submit',
+                            listeners: {
+                                'click': function (btn, form) {
+                                    Ext.Msg.alert('Success', "Congratulation！")
+                                }
+                            }
+                        }]
                     }]
                 }]
             });
