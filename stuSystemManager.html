@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Ext Demo</title>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="./ext-3.3.0/resources/css/ext-all.css" />
+    <script type="text/javascript" src="./ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="./ext-3.3.0/ext-all.js"></script>
+    <style>
+        .buttonStyle button {
+            background-color: red;
+        }
+    </style>
+    <script>
+        Ext.onReady(function () {
+            var menu = new Ext.menu.Menu({
+                items: [{
+                    id: 'deleteNode',
+                    text: 'Delete Node'
+                },{
+                    id: 'addNode',
+                }],
+                listeners: {
+                    itemclick: function (item) {
+                        switch (item.id) {
+                            case 'deleteNode':
+                                var currentNode = item.parentMenu.contextNode;
+                                if (currentNode.parentNode) {
+                                    currentNode.remove();
+                                }
+                                break;
+                            case 'addNode':
+                                break;
+                        }
+                    }
+                }
+            });
+            var treeEditor = new Ext.tree.TreeEditor(tree, {allowBlank: false}, {
+				listeners: {
+					complete: function(editor, currVal, origVal) {
+						
+					}
+				}
+			});
+            var root = new Ext.tree.AsyncTreeNode({ text: 'All BL/Shipments', expanded: true });
+            var tree = new Ext.tree.TreePanel({
+                renderTo: 'test',
+                width: 500,
+                height: 400,
+                animate: true,
+                enableDD: true,
+                collapsible: true,
+                root: root,
+                selModel:new Ext.tree.MultiSelectionModel({}),
+                loader: new Ext.tree.TreeLoader({ dataUrl: 'stuSystem.txt' }),
+                contextMenu: menu,
+                listeners: {
+                    contextmenu: function (node, e) {
+                        node.select();
+                        var treeContextMenu = node.getOwnerTree().contextMenu;
+                        treeContextMenu.contextNode = node;
+                        treeContextMenu.showAt(e.getXY());
+                    },
+                },
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id='test'></div>
+</body>
+
+</html>
