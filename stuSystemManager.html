@@ -7,11 +7,6 @@
     <link rel="stylesheet" type="text/css" href="./ext-3.3.0/resources/css/ext-all.css" />
     <script type="text/javascript" src="./ext-3.3.0/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="./ext-3.3.0/ext-all.js"></script>
-    <style>
-        .buttonStyle button {
-            background-color: red;
-        }
-    </style>
     <script>
         Ext.onReady(function () {
             var menu = new Ext.menu.Menu({
@@ -24,31 +19,44 @@
                 }],
                 listeners: {
                     itemclick: function (item) {
+                        tree.expandAll();
                         let currentNode = item.parentMenu.contextNode;
+                        console.log(currentNode);
                         switch (item.id) {
                             case 'deleteNode':
-                                console.log(item);
                                 if (currentNode.parentNode) {
                                     currentNode.remove();
                                 }
                                 break;
                             case 'addNode':
-                    
-                                if (currentNode.parentNode) {
+                                if (currentNode.isLeaf()) {
                                     let newNode = new Ext.tree.TreeNode({
-                                        text: currentNode.text
+                                        text: currentNode.text,
+                                        leaf: true,
                                     });
-                                    currentNode.parentNode.insertBefore(newNode,currentNode);
+                                    currentNode.parentNode.insertBefore(newNode, currentNode);
                                 } else {
-                                    currentNode.appendChild(newNode);
+                                    if (currentNode.childNodes.every(n => n.leaf === true)) {
+                                        let newNode = new Ext.tree.TreeNode({
+                                            text: currentNode.text,
+                                            leaf: true,
+                                        });
+                                        currentNode.appendChild(newNode);
+                                    } else {
+                                        let newNode = new Ext.tree.TreeNode({
+                                            text: currentNode.text
+                                        });
+                                        currentNode.appendChild(newNode);
+                                    }
                                 }
                         }
                     }
                 }
             });
             var root = new Ext.tree.AsyncTreeNode({ text: 'All BL/Shipments', expanded: true });
+            var selectNode = '';
+            var inputStuOrClsInfo = '';
             var tree = new Ext.tree.TreePanel({
-                renderTo: 'test',
                 width: 500,
                 height: 400,
                 animate: true,
@@ -65,7 +73,72 @@
                         treeContextMenu.contextNode = node;
                         treeContextMenu.showAt(e.getXY());
                     },
+                    click: function (node, e) {
+                        selectNode = '';
+                        selectNode = node;
+                    }
                 },
+            });
+            var viewport = new Ext.Viewport({
+                layout: 'border',
+                items: [{
+                    xtype: 'form',
+                    region: 'west',
+                    width: 500,
+                    border: true,
+                    layout: 'accordion',
+                    items: [tree]
+                }, {
+                    region: 'center',
+                    split: true,
+                    border: true,
+                    xtype: 'form',
+                    labelWidth: 160,
+                    items: [{
+                        xtype: 'textfield',
+                        fieldLabel: '请输入学生或班级信息',
+                        listeners: {
+                            change: function (field, newValue, oldValue) {
+                                inputStuOrClsInfo = newValue;
+                            },
+                        }
+                    }],
+                    buttons: [{
+                        text: 'add',
+                        listeners: {
+                            'click': function (btn, form) {
+                                tree.expandAll();
+                                if (!selectNode) {
+                                    let newNode = new Ext.tree.TreeNode({
+                                        text: 'text'
+                                    });
+                                    tree.getRootNode().appendChild(newNode);
+                                } else {
+                                    if (selectNode.isLeaf()) {
+                                        let newNode = new Ext.tree.TreeNode({
+                                            text: inputStuOrClsInfo,
+                                            leaf: true,
+                                        });
+                                        selectNode.parentNode.insertBefore(newNode, selectNode);
+                                    } else {
+                                        if (selectNode.childNodes.every(n => n.leaf === true)) {
+                                            let newNode = new Ext.tree.TreeNode({
+                                                text: inputStuOrClsInfo,
+                                                leaf: true,
+                                            });
+                                            selectNode.appendChild(newNode);
+                                        } else {
+                                            let newNode = new Ext.tree.TreeNode({
+                                                text: selectNode.text
+                                            });
+                                            selectNode.appendChild(newNode);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }]
+                }]
             });
             var treeEditor = new Ext.tree.TreeEditor(tree, { allowBlank: false }, {
                 listeners: {
@@ -79,7 +152,6 @@
 </head>
 
 <body>
-    <div id='test'></div>
 </body>
 
 </html>
