@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Ext Demo</title>
+<title>stuSystemManager</title>
 
 <head>
     <link rel="stylesheet" type="text/css" href="./ext-3.3.0/resources/css/ext-all.css" />
@@ -17,13 +17,13 @@
                     leaf: isLeaf,
                 });
             }
-            function addNewNode(node) {
+            function addNewNode(node,info) {
                 if (node.isLeaf()) {
-                    node.parentNode.appendChild(createNewNode(node, leafInfo));
+                    node.parentNode.appendChild(createNewNode(info, leafInfo));
                 } else if (node.childNodes.every(n => n.leaf === true)) {
-                    node.appendChild(createNewNode(node, leafInfo));
+                    node.appendChild(createNewNode(info, leafInfo));
                 } else {
-                    node.appendChild(createNewNode(node, !leafInfo));
+                    node.appendChild(createNewNode(info, !leafInfo));
                 }
             }
             var menu = new Ext.menu.Menu({
@@ -45,7 +45,7 @@
                                 }
                                 break;
                             case 'addNode':
-                                addNewNode(currentNode);
+                                addNewNode(currentNode,currentNode.text);
                                 break;
                         }
                     }
@@ -107,9 +107,9 @@
                             'click': function (btn, form) {
                                 tree.expandAll();
                                 if (!selectNode) {
-                                    tree.getRootNode().appendChild(createNewNode('class', false));
+                                    tree.getRootNode().appendChild(createNewNode(inputStuOrClsInfo, false));
                                 } else {
-                                    addNewNode(selectNode);
+                                    addNewNode(selectNode,inputStuOrClsInfo);
                                 }
                             }
                         }
