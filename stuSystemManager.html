@@ -74,7 +74,7 @@
                     click: function (node, e) {
                         selectNode = '';
                         selectNode = node;
-                    }
+                    },
                 },
             });
             var viewport = new Ext.Viewport({
@@ -105,11 +105,12 @@
                         text: 'add',
                         listeners: {
                             'click': function (btn, form) {
+                                let tmpNode = selectNode;
                                 tree.expandAll();
-                                if (!selectNode) {
+                                if (!tmpNode) {
                                     tree.getRootNode().appendChild(createNewNode(inputStuOrClsInfo, false));
                                 } else {
-                                    addNewNode(selectNode,inputStuOrClsInfo);
+                                    addNewNode(tmpNode,inputStuOrClsInfo);
                                 }
                             }
                         }
