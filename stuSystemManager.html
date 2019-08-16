@@ -7,6 +7,15 @@
     <link rel="stylesheet" type="text/css" href="./ext-3.3.0/resources/css/ext-all.css" />
     <script type="text/javascript" src="./ext-3.3.0/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="./ext-3.3.0/ext-all.js"></script>
+    <style>
+        .x-btn {
+            font: normal 11px tahoma, verdana, helvetica;
+            position: absolute;
+            left: 19%;
+            top:0;
+            width: 40px !important;
+        }
+    </style>
     <script>
         Ext.onReady(function () {
             var leafInfo = true;
@@ -17,7 +26,7 @@
                     leaf: isLeaf,
                 });
             }
-            function addNewNode(node,info) {
+            function addNewNode(node, info) {
                 if (node.isLeaf()) {
                     node.parentNode.appendChild(createNewNode(info, leafInfo));
                 } else if (node.childNodes.every(n => n.leaf === true)) {
@@ -45,13 +54,13 @@
                                 }
                                 break;
                             case 'addNode':
-                                addNewNode(currentNode,currentNode.text);
+                                addNewNode(currentNode, currentNode.text);
                                 break;
                         }
                     }
                 }
             });
-            var root = new Ext.tree.AsyncTreeNode({ text: 'All BL/Shipments', expanded: true });
+            var root = new Ext.tree.AsyncTreeNode({ text: 'classes', expanded: true });
             var selectNode = '';
             var inputStuOrClsInfo = '';
             var tree = new Ext.tree.TreePanel({
@@ -100,8 +109,9 @@
                                 inputStuOrClsInfo = newValue;
                             },
                         }
-                    }],
-                    buttons: [{
+                    },
+                    {
+                        xtype: 'button',
                         text: 'add',
                         listeners: {
                             'click': function (btn, form) {
@@ -110,11 +120,14 @@
                                 if (!tmpNode) {
                                     tree.getRootNode().appendChild(createNewNode(inputStuOrClsInfo, false));
                                 } else {
-                                    addNewNode(tmpNode,inputStuOrClsInfo);
+                                    addNewNode(tmpNode, inputStuOrClsInfo);
                                 }
                             }
                         }
-                    }]
+                    }
+                    ],
+                    buttons: [
+                    ]
                 }]
             });
             var treeEditor = new Ext.tree.TreeEditor(tree, { allowBlank: false }, {
