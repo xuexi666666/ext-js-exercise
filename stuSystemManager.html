@@ -17,32 +17,35 @@
             var menu = new Ext.menu.Menu({
                 items: [{
                     id: 'deleteNode',
-                    text: 'Delete Node'
-                },{
+                    text: 'Delete Node',
+                }, {
                     id: 'addNode',
+                    text: 'Add Node'
                 }],
                 listeners: {
                     itemclick: function (item) {
+                        let currentNode = item.parentMenu.contextNode;
                         switch (item.id) {
                             case 'deleteNode':
-                                var currentNode = item.parentMenu.contextNode;
+                                console.log(item);
                                 if (currentNode.parentNode) {
                                     currentNode.remove();
                                 }
                                 break;
                             case 'addNode':
-                                break;
+                    
+                                if (currentNode.parentNode) {
+                                    let newNode = new Ext.tree.TreeNode({
+                                        text: currentNode.text
+                                    });
+                                    currentNode.parentNode.insertBefore(newNode,currentNode);
+                                } else {
+                                    currentNode.appendChild(newNode);
+                                }
                         }
                     }
                 }
             });
-            var treeEditor = new Ext.tree.TreeEditor(tree, {allowBlank: false}, {
-				listeners: {
-					complete: function(editor, currVal, origVal) {
-						
-					}
-				}
-			});
             var root = new Ext.tree.AsyncTreeNode({ text: 'All BL/Shipments', expanded: true });
             var tree = new Ext.tree.TreePanel({
                 renderTo: 'test',
@@ -52,7 +55,7 @@
                 enableDD: true,
                 collapsible: true,
                 root: root,
-                selModel:new Ext.tree.MultiSelectionModel({}),
+                selModel: new Ext.tree.MultiSelectionModel({}),
                 loader: new Ext.tree.TreeLoader({ dataUrl: 'stuSystem.txt' }),
                 contextMenu: menu,
                 listeners: {
@@ -63,6 +66,13 @@
                         treeContextMenu.showAt(e.getXY());
                     },
                 },
+            });
+            var treeEditor = new Ext.tree.TreeEditor(tree, { allowBlank: false }, {
+                listeners: {
+                    complete: function (editor, currVal, origVal) {
+
+                    }
+                }
             });
         });
     </script>
