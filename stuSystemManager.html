@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>stuSystemManager</title>
+<title>Ext Demo</title>
 
 <head>
     <link rel="stylesheet" type="text/css" href="./ext-3.3.0/resources/css/ext-all.css" />
@@ -9,6 +9,23 @@
     <script type="text/javascript" src="./ext-3.3.0/ext-all.js"></script>
     <script>
         Ext.onReady(function () {
+            var leafInfo = true;
+            function createNewNode(node, isLeaf) {
+                let info = node.text ? node.text : node
+                return new Ext.tree.TreeNode({
+                    text: info,
+                    leaf: isLeaf,
+                });
+            }
+            function addNewNode(node) {
+                if (node.isLeaf()) {
+                    node.parentNode.appendChild(createNewNode(node, leafInfo));
+                } else if (node.childNodes.every(n => n.leaf === true)) {
+                    node.appendChild(createNewNode(node, leafInfo));
+                } else {
+                    node.appendChild(createNewNode(node, !leafInfo));
+                }
+            }
             var menu = new Ext.menu.Menu({
                 items: [{
                     id: 'deleteNode',
@@ -21,7 +38,6 @@
                     itemclick: function (item) {
                         tree.expandAll();
                         let currentNode = item.parentMenu.contextNode;
-                        console.log(currentNode);
                         switch (item.id) {
                             case 'deleteNode':
                                 if (currentNode.parentNode) {
@@ -29,26 +45,8 @@
                                 }
                                 break;
                             case 'addNode':
-                                if (currentNode.isLeaf()) {
-                                    let newNode = new Ext.tree.TreeNode({
-                                        text: currentNode.text,
-                                        leaf: true,
-                                    });
-                                    currentNode.parentNode.insertBefore(newNode, currentNode);
-                                } else {
-                                    if (currentNode.childNodes.every(n => n.leaf === true)) {
-                                        let newNode = new Ext.tree.TreeNode({
-                                            text: currentNode.text,
-                                            leaf: true,
-                                        });
-                                        currentNode.appendChild(newNode);
-                                    } else {
-                                        let newNode = new Ext.tree.TreeNode({
-                                            text: currentNode.text
-                                        });
-                                        currentNode.appendChild(newNode);
-                                    }
-                                }
+                                addNewNode(currentNode);
+                                break;
                         }
                     }
                 }
@@ -109,31 +107,9 @@
                             'click': function (btn, form) {
                                 tree.expandAll();
                                 if (!selectNode) {
-                                    let newNode = new Ext.tree.TreeNode({
-                                        text: 'text'
-                                    });
-                                    tree.getRootNode().appendChild(newNode);
+                                    tree.getRootNode().appendChild(createNewNode('class', false));
                                 } else {
-                                    if (selectNode.isLeaf()) {
-                                        let newNode = new Ext.tree.TreeNode({
-                                            text: inputStuOrClsInfo,
-                                            leaf: true,
-                                        });
-                                        selectNode.parentNode.insertBefore(newNode, selectNode);
-                                    } else {
-                                        if (selectNode.childNodes.every(n => n.leaf === true)) {
-                                            let newNode = new Ext.tree.TreeNode({
-                                                text: inputStuOrClsInfo,
-                                                leaf: true,
-                                            });
-                                            selectNode.appendChild(newNode);
-                                        } else {
-                                            let newNode = new Ext.tree.TreeNode({
-                                                text: selectNode.text
-                                            });
-                                            selectNode.appendChild(newNode);
-                                        }
-                                    }
+                                    addNewNode(selectNode);
                                 }
                             }
                         }
@@ -143,7 +119,7 @@
             var treeEditor = new Ext.tree.TreeEditor(tree, { allowBlank: false }, {
                 listeners: {
                     complete: function (editor, currVal, origVal) {
-
+                        Ext.Msg.alert('success', origVal + 'update to' + currVal);
                     }
                 }
             });
