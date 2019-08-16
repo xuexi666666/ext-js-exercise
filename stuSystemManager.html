@@ -8,8 +8,7 @@
     <script type="text/javascript" src="./ext-3.3.0/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="./ext-3.3.0/ext-all.js"></script>
     <style>
-        .x-btn {
-            font: normal 11px tahoma, verdana, helvetica;
+        .buttonStyle {
             position: absolute;
             left: 19%;
             top: 0;
@@ -87,6 +86,33 @@
                         selectNode = node;
                     },
                 },
+                tbar: [ {
+                    text: '显示全部',
+                    handler: function () {
+                        treeFiler.clear();
+                    }
+                }, '-', {
+                    xtype: 'textfield',
+                    emptyText: '快速过滤功能',
+                    enableKeyEvents: true,
+                    listeners: {
+                        keyup: function (e) {
+                            var t = this.getValue()
+                            var es = Ext.escapeRe(t);
+                            var re = new RegExp(es, 'i');
+                            treeFiler.filterBy(function (n) {
+                                return !n.isLeaf() || re.test(n.text);
+                            });
+                            hiddenPkgs = [];
+                            tree.root.cascade(function (n) {
+                                if (!n.isLeaf() && n.ui.ctNode.offsetHeight < 3) {
+                                    n.ui.hide();
+                                    hiddenPkgs.push(n);
+                                }
+                            });
+                        }
+                    }
+                }]
             });
             var viewport = new Ext.Viewport({
                 layout: 'border',
@@ -114,6 +140,7 @@
                     },
                     {
                         xtype: 'button',
+                        cls:'buttonStyle',
                         text: 'add',
                         listeners: {
                             'click': function (btn, form) {
@@ -139,6 +166,20 @@
                     }
                 }
             });
+            var treeFiler = new Ext.tree.TreeFilter(tree, {
+                clearBlank: true,     
+                autoClear: true
+            });
+            new Ext.tree.TreeSorter(tree, {
+                caseSensitive: false,
+                folderSort: true,
+                leaf: 'leaf',
+                dir: 'asc',
+                property: 'text',
+                sortType: function (nodeText) {
+                    return nodeText.toLowerCase();
+                }
+            })
         });
     </script>
 </head>
