@@ -12,7 +12,7 @@
             font: normal 11px tahoma, verdana, helvetica;
             position: absolute;
             left: 19%;
-            top:0;
+            top: 0;
             width: 40px !important;
         }
     </style>
@@ -50,10 +50,12 @@
                         switch (item.id) {
                             case 'deleteNode':
                                 if (currentNode.parentNode) {
+                                    selectNode = '';
                                     currentNode.remove();
                                 }
                                 break;
                             case 'addNode':
+                                selectNode = currentNode
                                 addNewNode(currentNode, currentNode.text);
                                 break;
                         }
