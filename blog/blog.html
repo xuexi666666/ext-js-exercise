@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Blog</title>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="./ext-3.3.0/resources/css/ext-all.css" />
+    <script type="text/javascript" src="./ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="./ext-3.3.0/ext-all.js"></script>
+    <style>
+        .blist {
+            background-image: url(list-items.gif) !important;
+        }
+        .slist {
+            background-image: url(menu-show.gif) !important;
+        }
+    </style>
+    <script type="text/javascript">
+        Ext.onReady(function () {
+            Ext.QuickTips.init();
+
+            var styleButton = new Ext.Toolbar.SplitButton({
+                text: 'styleButton',
+                handler: onButtonClick,
+                iconCls: 'blist',
+                menu: {
+                    items: [{
+                        text: '<b>Bold</b>', handler: onItemClick
+                    }, {
+                        text: '<i>Italic</i>', handler: onItemClick
+                    }, {
+                        text: '<u>Underline</u>', handler: onItemClick
+                    }, '-', {
+                        text: 'Pick a Color',
+                        handler: onItemClick,
+                        menu: {
+                            items: [
+                                new Ext.ColorPalette({
+                                    listeners: {
+                                        select: function (cp, color) {
+                                            Ext.example.msg('Color Selected', 'You chose {0}.', color);
+                                        }
+                                    }
+                                }), '-',
+                                {
+                                    text: 'More Colors...',
+                                    handler: onItemClick
+                                }
+                            ]
+                        }
+                    }]
+                }
+            });
+            new Ext.Window({
+                layout: 'anchor',
+                width: 500,
+                height: 300,
+                items: [{
+                    title: 'Item 1',
+                    width: 500,
+                    xtype: 'toolbar',
+                    items: [styleButton, '-', {
+                        xtype: 'splitbutton',
+                        text: 'editButton',
+                        iconCls: 'blist',
+                        defaults: {
+                            xtype: 'button',
+                            anchor: '20%'
+                        },
+                        menu: {
+                            plain: true,
+                            defaults: {
+                                iconCls: 'blist',
+                            },
+                            items: [{
+                                text: 'edit',
+                                handler: '',
+                            }, {
+                                text: 'insert',
+                                handler: '',
+                            }]
+                        }
+                    }, '-', {
+                            xtype: 'button',
+                            text:'reply',
+                            iconCls:'slist',
+                            handler: '',
+                        }]
+                }, {
+                    xtype: 'textarea',
+                    anchor:'100% 100%'
+                }]
+            }).show();
+            function onButtonClick(btn) {
+                Ext.example.msg('Button Click', 'You clicked the "{0}" button.', btn.text);
+            }
+
+            function onItemClick(item) {
+                Ext.example.msg('Menu Click', 'You clicked the "{0}" menu item.', item.text);
+            }
+
+            function onItemCheck(item, checked) {
+                Ext.example.msg('Item Check', 'You {1} the "{0}" menu item.', item.text, checked ? 'checked' : 'unchecked');
+            }
+
+            function onItemToggle(item, pressed) {
+                Ext.example.msg('Button Toggled', 'Button "{0}" was toggled to {1}.', item.text, pressed);
+            }
+
+        });
+    </script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="toolbar"></div>
+    </div>
+</body>
+
+</html>
