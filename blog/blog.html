@@ -18,9 +18,19 @@
     </style>
     <script type="text/javascript">
         Ext.onReady(function () {
+            var data = [
+			{name:'Waylon',city:'珠海市香洲区',age:21,work:'Software Architect'},
+			{name:'Bill',city:'珠海市香洲区',age:21,work:'Software Architect'},
+			{name:'Danny',city:'珠海市香洲区',age:21,work:'Software Architect'},
+			{name:'Tiger',city:'珠海市香洲区',age:21,work:'Software Architect'}
+		];
+            var task = new Ext.util.DelayedTask(function () {
+                Ext.Msg.alert('Done', "success");
+            });
+
             var styleButton = new Ext.Toolbar.SplitButton({
                 text: 'styleButton',
-                handler: onButtonClick,
+                handler: splitButtonClick,
                 iconCls: 'blist',
                 menu: {
                     items: [{
@@ -53,10 +63,10 @@
             new Ext.Window({
                 layout: 'anchor',
                 width: 550,
-                height: 300,
+                height: 600,
                 collapsible: true,
                 collapsed: true,
-                labelAlign: 'top',
+            
                 frame: true,
                 items: [{
                     title: 'Item 1',
@@ -76,11 +86,11 @@
                                 iconCls: 'blist',
                             },
                             items: [{
-                                text: 'edit',
-                                handler: '',
+                                text: 'reset',
+                                handler: reset,
                             }, {
                                 text: 'insert',
-                                handler: '',
+                                handler: insertXTpl,
                             }]
                         }
                     }, '-', {
@@ -94,7 +104,9 @@
                 },
                 {
                     xtype: 'textarea',
-                    anchor: '100% 100%',
+                    trackResetOnLoad:true,
+                    id: 'blogText',
+                    anchor: '100% 50%',
                     listeners: {
                         blur: function (field) {
                             let blogContent = field.getValue().trim();
@@ -105,213 +117,74 @@
                             }
                         }
                     }
-                }
-                ]
-            }).show();
-            var replyComponent = Ext.getCmp('replyId');
-
-            function onButtonClick(btn) {
-                Ext.MessageBox.confirm('Confirm', 'Are you sure to post this blog?', function (btn, text) {
-                    if (btn === "yes") {
-                        Ext.MessageBox.show({
-                            title: 'Please wait',
-                            msg: 'Loading items...',
-                            progressText: 'Initializing...',
-                            width: 300,
-                            progress: true,
-                            closable: false,
-                        });
-                        var f = function (v) {
-                            return function () {
-                                if (v == 12) {
-                                    Ext.MessageBox.hide();
-                                    Ext.Msg.alert('Done', 'Blog posted successfully!');
-                                } else {
-                                    var i = v / 11;
-                                    Ext.MessageBox.updateProgress(i, Math.round(100 * i) + '% completed');
-                                }
-                            };
-                        };
-                        for (var i = 1; i < 13; i++) {
-                            setTimeout(f(i), i * 300);
-                        }
-                    }
-                });
-            }
-
-            function onItemClick(item) {
-                Ext.example.msg('Menu Click', 'You clicked the "{0}" menu item.', item.text);
-            }
-
-            function onItemCheck(item, checked) {
-                Ext.example.msg('Item Check', 'You {1} the "{0}" menu item.', item.text, checked ? 'checked' : 'unchecked');
-            }
-
-            function onItemToggle(item, pressed) {
-                Ext.example.msg('Button Toggled', 'Button "{0}" was toggled to {1}.', item.text, pressed);
-            }
-
-        });
-    </script>
-</head>
-
-<body>
-    <div id="container">
-        <div id="toolbar"></div>
-    </div>
-</body>
-
-</html><!DOCTYPE html>
-<html>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Blog</title>
-
-<head>
-    <link rel="stylesheet" type="text/css" href="./ext-3.3.0/resources/css/ext-all.css" />
-    <script type="text/javascript" src="./ext-3.3.0/adapter/ext/ext-base.js"></script>
-    <script type="text/javascript" src="./ext-3.3.0/ext-all.js"></script>
-    <style>
-        .blist {
-            background-image: url(list-items.gif) !important;
-        }
-
-        .slist {
-            background-image: url(menu-show.gif) !important;
-        }
-    </style>
-    <script type="text/javascript">
-        Ext.onReady(function () {
-            var styleButton = new Ext.Toolbar.SplitButton({
-                text: 'styleButton',
-                handler: onButtonClick,
-                iconCls: 'blist',
-                menu: {
-                    items: [{
-                        text: '<b>Bold</b>', handler: onItemClick
-                    }, {
-                        text: '<i>Italic</i>', handler: onItemClick
-                    }, {
-                        text: '<u>Underline</u>', handler: onItemClick
-                    }, '-', {
-                        text: 'Pick a Color',
-                        handler: onItemClick,
-                        menu: {
-                            items: [
-                                new Ext.ColorPalette({
-                                    listeners: {
-                                        select: function (cp, color) {
-                                            Ext.example.msg('Color Selected', 'You chose {0}.', color);
-                                        }
-                                    }
-                                }), '-',
-                                {
-                                    text: 'More Colors...',
-                                    handler: onItemClick
-                                }
-                            ]
-                        }
+                },{
+                    xtype:'panel',
+                    anchor:'100% 50%',
+                    items:[{
+                        xtype:'panel',
+                        anchor:'100%,50%',
+                        id: 'tableInfo',
                     }]
                 }
-            });
-            new Ext.Window({
-                layout: 'anchor',
-                width: 550,
-                height: 300,
-                collapsible: true,
-                collapsed: true,
-                labelAlign: 'top',
-                frame: true,
-                items: [{
-                    title: 'Item 1',
-                    anchor: "98%",
-                    xtype: 'toolbar',
-                    items: [styleButton, '-', {
-                        xtype: 'splitbutton',
-                        text: 'editButton',
-                        iconCls: 'blist',
-                        defaults: {
-                            xtype: 'button',
-                            anchor: '20%'
-                        },
-                        menu: {
-                            plain: true,
-                            defaults: {
-                                iconCls: 'blist',
-                            },
-                            items: [{
-                                text: 'edit',
-                                handler: '',
-                            }, {
-                                text: 'insert',
-                                handler: '',
-                            }]
-                        }
-                    }, '-', {
-                            xtype: 'button',
-                            disabled: true,
-                            id: 'replyId',
-                            text: 'reply',
-                            iconCls: 'slist',
-                            handler: onButtonClick,
-                        }]
-                },
-                {
-                    xtype: 'textarea',
-                    anchor: '100% 100%',
-                    listeners: {
-                        blur: function (field) {
-                            let blogContent = field.getValue().trim();
-                            if (Ext.isEmpty(blogContent)) {
-                                replyComponent.setDisabled(true);
-                            } else {
-                                replyComponent.setDisabled(false);
-                            }
-                        }
-                    }
-                }
                 ]
             }).show();
             var replyComponent = Ext.getCmp('replyId');
+            function splitButtonClick(btn) {
 
+            }
             function onButtonClick(btn) {
                 Ext.MessageBox.confirm('Confirm', 'Are you sure to post this blog?', function (btn, text) {
                     if (btn === "yes") {
-                        Ext.MessageBox.show({
-                            title: 'Please wait',
-                            msg: 'Loading items...',
-                            progressText: 'Initializing...',
-                            width: 300,
-                            progress: true,
-                            closable: false,
-                        });
-                        var f = function (v) {
-                            return function () {
-                                if (v == 12) {
-                                    Ext.MessageBox.hide();
-                                    Ext.Msg.alert('Done', 'Blog posted successfully!');
-                                } else {
-                                    var i = v / 11;
-                                    Ext.MessageBox.updateProgress(i, Math.round(100 * i) + '% completed');
-                                }
-                            };
-                        };
-                        for (var i = 1; i < 13; i++) {
-                            setTimeout(f(i), i * 300);
-                        }
+                        processBarShow();
                     }
                 });
             }
-
+            function processBarShow() {
+                task.delay(3000);
+                Ext.MessageBox.show({
+                    title: 'Please wait',
+                    msg: 'Loading items...',
+                    progressText: 'Initializing...',
+                    width: 300,
+                    progress: true,
+                    closable: false,
+                    wait: true,
+                    waitConfig: {
+                        interval: 300, duration: 3000, fn: function () {
+                            Ext.Msg.hide();
+                        }
+                    },
+                });
+            }
+            var tpl1 = new Ext.XTemplate(
+                    '<table border=1 cellpadding=0 cellspacing = 0>',
+                    '<tr><td width=90 >姓名</td><td width=90 >城市</td><td width=90 >年龄</td><td width=90 >工作</td></tr>',
+                    '<tpl for=".">',
+                    '<tr><td>{name}</td><td>{city}</td><td>{age}</td><td>{work}</td></tr>',
+                    '</tpl>',
+                    '</table>'
+                );
+            function insertXTpl() {
+                tpl1.append(Ext.get("tableInfo"), data);
+                tpl1.append("blogText", data);
+            }
+            function reset() {
+                let table = Ext.get("tableInfo");
+                let resetCmp = Ext.getCmp('blogText');
+                resetCmp.reset();
+                table.dom.innerHTML = '';
+                replyComponent.setDisabled(true);
+            }
             function onItemClick(item) {
-                Ext.example.msg('Menu Click', 'You clicked the "{0}" menu item.', item.text);
+
             }
 
             function onItemCheck(item, checked) {
-                Ext.example.msg('Item Check', 'You {1} the "{0}" menu item.', item.text, checked ? 'checked' : 'unchecked');
+
             }
 
             function onItemToggle(item, pressed) {
-                Ext.example.msg('Button Toggled', 'Button "{0}" was toggled to {1}.', item.text, pressed);
+
             }
 
         });
@@ -319,9 +192,6 @@
 </head>
 
 <body>
-    <div id="container">
-        <div id="toolbar"></div>
-    </div>
 </body>
 
 </html>
