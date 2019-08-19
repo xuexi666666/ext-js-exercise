@@ -11,14 +11,13 @@
         .blist {
             background-image: url(list-items.gif) !important;
         }
+
         .slist {
             background-image: url(menu-show.gif) !important;
         }
     </style>
     <script type="text/javascript">
         Ext.onReady(function () {
-            Ext.QuickTips.init();
-
             var styleButton = new Ext.Toolbar.SplitButton({
                 text: 'styleButton',
                 handler: onButtonClick,
@@ -55,6 +54,8 @@
                 layout: 'anchor',
                 width: 500,
                 height: 300,
+                collapsible: true,
+                collapsed: true,
                 items: [{
                     title: 'Item 1',
                     width: 500,
@@ -82,15 +83,27 @@
                         }
                     }, '-', {
                             xtype: 'button',
-                            text:'reply',
-                            iconCls:'slist',
+                            id: 'replyId',
+                            text: 'reply',
+                            iconCls: 'slist',
                             handler: '',
                         }]
                 }, {
                     xtype: 'textarea',
-                    anchor:'100% 100%'
+                    anchor: '100% 100%',
+                    listeners: {
+                        blur: function (field) {
+                            let blogContent = field.getValue().trim();
+                            if (Ext.isEmpty(blogContent)) {
+                                replyComponent.setDisabled(true);
+                            } else {
+                                replyComponent.setDisabled(false);
+                            }
+                        }
+                    }
                 }]
             }).show();
+            var replyComponent = Ext.getCmp('replyId');
             function onButtonClick(btn) {
                 Ext.example.msg('Button Click', 'You clicked the "{0}" button.', btn.text);
             }
