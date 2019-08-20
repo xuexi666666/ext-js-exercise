@@ -11,7 +11,6 @@
         Ext.onReady(function () {
             Ext.QuickTips.init();
             var insertPosition = 0;
-            var selectRowId = [];
             var comboData = [
                 ['0', 'male'],
                 ['1', 'female'],
@@ -265,9 +264,9 @@
                     }, '-', {
                         text: 'remove select', handler: function () {
                             let selectionRows = sm2.getSelections();
-                            if (Ext.isEmpty(selectionRows)){
+                            if (Ext.isEmpty(selectionRows)) {
                                 return;
-                            } 
+                            }
                             selectionRows.forEach(item => {
                                 store.remove(item)
                             })
@@ -287,6 +286,45 @@
                 }]
             });
             store.load({ params: { start: 0, limit: 3 } });
+            function moveRow(rowIndex, movePosition) {
+                movePosition = movePosition < 0 ? 0 : movePosition;
+                let result = store.getAt(rowIndex);
+                store.remove(result);
+                store.insert(movePosition, result);
+            }
+
+            function moveFirst() {
+                moveRow(insertPosition, 0);
+            }
+
+            function moveLast() {
+                moveRow(insertPosition, store.getTotalCount());
+            }
+
+            function moveUp() {
+                moveRow(insertPosition, insertPosition - 1);
+            }
+
+            function moveDown() {
+                moveRow(insertPosition, insertPosition + 1);
+            }
+
+            let contextMenu = new Ext.menu.Menu({
+                id: 'contentMenu',
+                items: [
+                    { text: 'First', handler: moveFirst },
+                    { text: 'Last', handler: moveLast },
+                    { text: 'up', handler: moveUp },
+                    { text: 'Down', handler: moveDown }
+                ]
+            })
+
+            grid.on('rowcontextmenu', function (field, rowIndex, e) {
+                e.preventDefault();
+                insertPosition = rowIndex;
+                grid.getSelectionModel().selectRow(insertPosition);
+                contextMenu.showAt(e.getXY());
+            })
             Ext.getCmp('expand').on('click', function () {
                 grid.getView().expandAllGroups();
             });
