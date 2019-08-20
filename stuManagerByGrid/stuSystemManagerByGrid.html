@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="D:/ext-3.3.0/resources/css/ext-all.css" />
     <script type="text/javascript" src="D:/ext-3.3.0/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="D:/ext-3.3.0/ext-all.js"></script>
+    <script type="text/javascript" src="PagingMemoryProxy.js"></script>
     <script type="text/javascript">
         Ext.onReady(function () {
             Ext.QuickTips.init();
@@ -17,10 +18,11 @@
             var stuForm = new Ext.Window({
                 layout: 'form',
                 plain: true,
-                width:500,
-                height:300,
-                autoScroll:true,
-                closeAction:'hide',
+                style: 'display: flex;justify-content: center;align-items: center;',
+                width: 500,
+                height: 300,
+                autoScroll: true,
+                closeAction: 'hide',
                 items: [{
                     xtype: 'form',
                     defaultType: 'textfield',
@@ -30,33 +32,73 @@
                     defaults: {
                         msgTarget: 'under',
                         allowBlank: false,
-                        blankText: '数据不能为空',
+                        blankText: 'Data cannot be empty',
                     },
                     items: [{
-                        fieldLabel:'姓名',
+                        fieldLabel: '姓名',
+                        vtype: 'alpha',
+                        emptyText: 'you name'
                     },
                     {
-                        fieldLabel:'班级',
+                        fieldLabel: '班级',
+                        vtype: 'alphanum',
+                        emptyText: 'you class'
                     },
                     {
-                        fieldLabel:'性别',
+                        fieldLabel: '性别',
+                        xtype: 'combo',
+                        vtype: 'alpha',
+                        emptyText: 'you sex',
+                        id: 'sexInfo',
+                        mode: 'local',
+                        store: new Ext.data.ArrayStore({
+                            id: 0,
+                            fields: ['sex', 'description'],
+                            data: comboData
+                        }),
+                        valueField: 'age',
+                        displayField: 'description'
                     },
                     {
-                        fieldLabel:'年龄',
+                        fieldLabel: '生日',
+                        xtype: 'datefield',
+                        allowBlank: false,
+                        emptyText: 'your birthday',
+                        format: 'Y-m-d',
+                        listeners: {
+                            select: function (field, date) {
+                                let today = new Date();
+                                let startDay = new Date(today.getFullYear() - 100, 1, 1);
+                                if (date.between(startDay, today)) {
+                                    Ext.getCmp("ageInfo").setValue(today.getFullYear() - date.getFullYear())
+                                } else {
+                                    field.setValue('');
+                                    Ext.Msg.alert('failed', `请选择${today.format('Y-m-d')}以内的时间`);
+                                }
+                            }
+                        }
                     },
                     {
-                        fieldLabel:'生日',
+                        fieldLabel: '年龄',
+                        id: 'ageInfo',
+                        vtype: 'alphanum',
+                        emptyText: 'you age'
                     },
                     {
-                        fieldLabel:'头像',
+                        fieldLabel: '头像',
+                        vtype: 'alpha',
+                        emptyText: 'you image',
                     },]
                 }],
+                listeners: {
+
+                },
                 buttons: [{
-                    text:'Submit',
-                    disabled:true
-                },{
+                    text: 'Submit',
+                    disabled: true
+                }, {
                     text: 'Close',
-                    handler: function(){
+                    handler: function () {
                         stuForm.hide();
                     }
                 }]
@@ -66,6 +108,7 @@
                 , {
                     header: '姓名',
                     dataIndex: 'name',
+                    sortable: true,
                     editor: new Ext.grid.GridEditor(
                         new Ext.form.TextField({
                             allowBlank: false
@@ -74,6 +117,7 @@
                 }, {
                     header: '班级',
                     dataIndex: 'class',
+                    sortable: true,
                     editor: new Ext.grid.GridEditor(
                         new Ext.form.TextField({
                             allowBlank: false
@@ -134,7 +178,7 @@
             ];
 
             var store = new Ext.data.GroupingStore({
-                proxy: new Ext.data.MemoryProxy(data),
+                proxy: new Ext.data.PagingMemoryProxy(data),
                 reader: new Ext.data.ArrayReader({}, [
                     { name: 'name' },
                     { name: 'class' },
@@ -143,8 +187,8 @@
                     { name: 'birthday' },
                     { name: 'avatar' }
                 ]),
-                groupField: 'sex',
-                sortInfo: { field: 'age', direction: "ASC" },
+                groupField: 'class',
+                sortInfo: { field: 'name', direction: "ASC" },
                 pruneModifiedRecords: true
             });
 
@@ -164,6 +208,13 @@
                 store: store,
                 cm: cm,
                 view: new Ext.grid.GroupingView(),
+                bbar: new Ext.PagingToolbar({
+                    pageSize: 3,
+                    store: store,
+                    displayInfo: true,
+                    displayMsg: '显示第{0}条到{1}条记录,一共{2}条',
+                    emptyMsg: "没有记录"
+                }),
                 tbar: new Ext.Toolbar(['-', {
                     text: '添加学生信息',
                     handler: function () {
@@ -201,6 +252,7 @@
                     text: 'collapse'
                 }]
             });
+            store.load({params:{start:0,limit:3}});
             Ext.getCmp('expand').on('click', function () {
                 grid.getView().expandAllGroups();
             });
