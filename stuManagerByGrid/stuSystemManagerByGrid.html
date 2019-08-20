@@ -11,10 +11,13 @@
         Ext.onReady(function () {
             Ext.QuickTips.init();
             var insertPosition = 0;
+            var selectRowId = [];
             var comboData = [
                 ['0', 'male'],
                 ['1', 'female'],
             ];
+            var sm2 = new Ext.grid.CheckboxSelectionModel();
+
             var addStudent = function () {
                 let initValue = new Ext.data.Record({
                     name: Ext.fly('name').getValue(),
@@ -29,7 +32,7 @@
                 } else {
                     initValue.data.sex = '0';
                 }
-                store.insert(insertPosition+1, initValue);
+                store.insert(insertPosition + 1, initValue);
                 insertPosition = 0;
             }
             var stuForm = new Ext.Window({
@@ -129,8 +132,9 @@
                 }]
             });
             var cm = new Ext.grid.ColumnModel([
-                new Ext.grid.RowNumberer()
-                , {
+                new Ext.grid.RowNumberer(),
+                sm2,
+                {
                     header: '姓名',
                     dataIndex: 'name',
                     sortable: true,
@@ -232,6 +236,7 @@
                 renderTo: 'grid',
                 store: store,
                 cm: cm,
+                sm: sm2,
                 view: new Ext.grid.GroupingView(),
                 bbar: new Ext.PagingToolbar({
                     pageSize: 3,
@@ -257,7 +262,17 @@
                                 }
                             });
                         }
-                    },]),
+                    }, '-', {
+                        text: 'remove select', handler: function () {
+                            let selectionRows = sm2.getSelections();
+                            if (Ext.isEmpty(selectionRows)){
+                                return;
+                            } 
+                            selectionRows.forEach(item => {
+                                store.remove(item)
+                            })
+                        },
+                    }]),
                 listeners: {
                     rowclick: function (field, rowIndex, e) {
                         insertPosition = rowIndex;
