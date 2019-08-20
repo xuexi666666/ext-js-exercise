@@ -10,11 +10,28 @@
     <script type="text/javascript">
         Ext.onReady(function () {
             Ext.QuickTips.init();
-
+            var insertPosition = 0;
             var comboData = [
                 ['0', 'male'],
                 ['1', 'female'],
             ];
+            var addStudent = function () {
+                let initValue = new Ext.data.Record({
+                    name: Ext.fly('name').getValue(),
+                    class: Ext.fly('class').getValue(),
+                    sex: Ext.fly('sex').getValue(),
+                    age: Ext.fly('age').getValue(),
+                    birthday: Ext.fly('birthday').getValue(),
+                    avatar: Ext.fly('sex').getValue(),
+                })
+                if (initValue.data.sex === 'female') {
+                    initValue.data.sex = '1';
+                } else {
+                    initValue.data.sex = '0';
+                }
+                store.insert(insertPosition+1, initValue);
+                insertPosition = 0;
+            }
             var stuForm = new Ext.Window({
                 layout: 'form',
                 plain: true,
@@ -25,6 +42,7 @@
                 closeAction: 'hide',
                 items: [{
                     xtype: 'form',
+                    id: 'formInfo',
                     defaultType: 'textfield',
                     labelSeparator: '<font style="color:red">*</font>',
                     labelWidth: 50,
@@ -36,12 +54,14 @@
                     },
                     items: [{
                         fieldLabel: '姓名',
+                        id: 'name',
                         vtype: 'alpha',
                         emptyText: 'you name'
                     },
                     {
                         fieldLabel: '班级',
                         vtype: 'alphanum',
+                        id: 'class',
                         emptyText: 'you class'
                     },
                     {
@@ -49,19 +69,20 @@
                         xtype: 'combo',
                         vtype: 'alpha',
                         emptyText: 'you sex',
-                        id: 'sexInfo',
+                        id: 'sex',
                         mode: 'local',
                         store: new Ext.data.ArrayStore({
                             id: 0,
-                            fields: ['sex', 'description'],
+                            fields: ['value', 'text'],
                             data: comboData
                         }),
-                        valueField: 'age',
-                        displayField: 'description'
+                        valueField: 'value',
+                        displayField: 'text'
                     },
                     {
                         fieldLabel: '生日',
                         xtype: 'datefield',
+                        id: 'birthday',
                         allowBlank: false,
                         emptyText: 'your birthday',
                         format: 'Y-m-d',
@@ -70,7 +91,7 @@
                                 let today = new Date();
                                 let startDay = new Date(today.getFullYear() - 100, 1, 1);
                                 if (date.between(startDay, today)) {
-                                    Ext.getCmp("ageInfo").setValue(today.getFullYear() - date.getFullYear())
+                                    Ext.getCmp("age").setValue(today.getFullYear() - date.getFullYear())
                                 } else {
                                     field.setValue('');
                                     Ext.Msg.alert('failed', `请选择${today.format('Y-m-d')}以内的时间`);
@@ -80,25 +101,29 @@
                     },
                     {
                         fieldLabel: '年龄',
-                        id: 'ageInfo',
+                        id: 'age',
                         vtype: 'alphanum',
                         emptyText: 'you age'
                     },
                     {
                         fieldLabel: '头像',
                         vtype: 'alpha',
+                        id: 'avatar',
                         emptyText: 'you image',
                     },]
                 }],
-                listeners: {
-
-                },
                 buttons: [{
                     text: 'Submit',
-                    disabled: true
+                    handler: function () {
+                        grid.stopEditing();
+                        addStudent();
+                        stuForm.hide();
+                        Ext.getCmp("formInfo").getForm().reset();
+                    }
                 }, {
                     text: 'Close',
                     handler: function () {
+                        Ext.getCmp("formInfo").getForm().reset();
                         stuForm.hide();
                     }
                 }]
@@ -219,16 +244,6 @@
                     text: '添加学生信息',
                     handler: function () {
                         stuForm.show();
-                        var initValue = { name: '', class: '', sex: '', age: '', birthday: '', avatar: '' };
-                        var p = new Record(initValue);
-                        grid.stopEditing();
-                        store.insert(0, p);
-                        grid.startEditing(0, 0);
-                        p.dirty = true;
-                        p.modified = initValue;
-                        if (store.modified.indexOf(p) == -1) {
-                            store.modified.push(p);
-                        }
                     }
                 }, '-', {
                         text: '删除学生信息',
@@ -237,13 +252,17 @@
                                 if (btn == 'yes') {
                                     var sm = grid.getSelectionModel();
                                     var cell = sm.getSelectedCell();
-
                                     var record = store.getAt(cell[0]);
                                     store.remove(record);
                                 }
                             });
                         }
                     },]),
+                listeners: {
+                    rowclick: function (field, rowIndex, e) {
+                        insertPosition = rowIndex;
+                    }
+                },
                 buttons: [{
                     id: 'expand',
                     text: 'expand'
@@ -252,7 +271,7 @@
                     text: 'collapse'
                 }]
             });
-            store.load({params:{start:0,limit:3}});
+            store.load({ params: { start: 0, limit: 3 } });
             Ext.getCmp('expand').on('click', function () {
                 grid.getView().expandAllGroups();
             });
