@@ -1,0 +1,170 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Store Modification</title>
+    <link rel="stylesheet" type="text/css" href="D:/ext-3.3.0/resources/css/ext-all.css" />
+    <script type="text/javascript" src="D:/ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="D:/ext-3.3.0/ext-all.js"></script>
+    <script type="text/javascript">
+        Ext.onReady(function () {
+            Ext.QuickTips.init();
+
+            var comboData = [
+                ['0', 'male'],
+                ['1', 'female'],
+            ];
+            var cm = new Ext.grid.ColumnModel([
+                new Ext.grid.RowNumberer()
+                , {
+                    header: '姓名',
+                    dataIndex: 'name',
+                    editor: new Ext.grid.GridEditor(
+                        new Ext.form.TextField({
+                            allowBlank: false
+                        })
+                    )
+                }, {
+                    header: '班级',
+                    dataIndex: 'class',
+                    editor: new Ext.grid.GridEditor(
+                        new Ext.form.TextField({
+                            allowBlank: false
+                        })
+                    )
+                }, {
+                    header: '性别',
+                    dataIndex: 'sex',
+                    editor: new Ext.grid.GridEditor(
+                        new Ext.form.ComboBox({
+                            store: new Ext.data.SimpleStore({
+                                fields: ['value', 'text'],
+                                data: comboData
+                            }),
+                            mode: 'local',
+                            triggerAction: 'all',
+                            valueField: 'value',
+                            displayField: 'text'
+                        })
+                    ),
+                    renderer: function (value) {
+                        return comboData[value][1];
+                    }
+                }, {
+                    header: '年龄',
+                    dataIndex: 'age',
+                    editor: new Ext.grid.GridEditor(
+                        new Ext.form.TextField({
+                            allowBlank: false
+                        })
+                    )
+                }, {
+                    header: '生日',
+                    dataIndex: 'birthday',
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+                    editor: new Ext.grid.GridEditor(
+                        new Ext.form.DateField({
+                            allowBlank: false,
+                            format: 'Y-m-d',
+                        })
+                    ),
+                }, {
+                    header: '头像',
+                    dataIndex: 'avatar',
+                    editor: new Ext.grid.GridEditor(
+                        new Ext.form.TextField({
+                            allowBlank: false
+                        })
+                    )
+                }]);
+
+            var data = [
+                ['name1', 'class1', '0', 22, new Date(), 'img1'],
+                ['name2', 'class2', '1', 22, new Date(), 'img2'],
+                ['name3', 'class3', '1', 22, new Date(), 'img3'],
+                ['name4', 'class4', '1', 22, new Date(), 'img4'],
+                ['name5', 'class5', '0', 22, new Date(), 'img5']
+            ];
+
+            var store = new Ext.data.GroupingStore({
+                proxy: new Ext.data.MemoryProxy(data),
+                reader: new Ext.data.ArrayReader({}, [
+                    { name: 'name' },
+                    { name: 'class' },
+                    { name: 'sex' },
+                    { name: 'age' },
+                    { name: 'birthday' },
+                    { name: 'avatar' }
+                ]),
+                groupField: 'sex',
+                sortInfo: { field: 'age', direction: "ASC" },
+                pruneModifiedRecords: true
+            });
+
+            var Record = Ext.data.Record.create([
+                { name: 'name', type: 'string' },
+                { name: 'class', type: 'string' },
+                { name: 'sex', type: 'string' },
+                { name: 'age', type: 'int' },
+                { name: 'birthday', type: 'string' },
+                { name: 'avatar', type: 'string' },
+            ]);
+            store.load();
+
+            var grid = new Ext.grid.EditorGridPanel({
+                autoHeight: true,
+                renderTo: 'grid',
+                store: store,
+                cm: cm,
+                view: new Ext.grid.GroupingView(),
+                tbar: new Ext.Toolbar(['-', {
+                    text: '添加学生信息',
+                    handler: function () {
+                        var initValue = { name: '', class: '', sex: '', age: '', birthday: '', avatar: '' };
+                        var p = new Record(initValue);
+                        grid.stopEditing();
+                        store.insert(0, p);
+                        grid.startEditing(0, 0);
+                        p.dirty = true;
+                        p.modified = initValue;
+                        if (store.modified.indexOf(p) == -1) {
+                            store.modified.push(p);
+                        }
+                    }
+                }, '-', {
+                        text: '删除学生信息',
+                        handler: function () {
+                            Ext.Msg.confirm('提示', '是否要删除', function (btn) {
+                                if (btn == 'yes') {
+                                    var sm = grid.getSelectionModel();
+                                    var cell = sm.getSelectedCell();
+
+                                    var record = store.getAt(cell[0]);
+                                    store.remove(record);
+                                }
+                            });
+                        }
+                    },]),
+                buttons: [{
+                    id: 'expand',
+                    text: 'expand'
+                }, {
+                    id: 'collapse',
+                    text: 'collapse'
+                }]
+            });
+            Ext.getCmp('expand').on('click', function () {
+                grid.getView().expandAllGroups();
+            });
+            Ext.getCmp('collapse').on('click', function () {
+                grid.getView().collapseAllGroups();
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="grid" style="height:300px;"></div>
+</body>
+
+</html>
