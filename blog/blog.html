@@ -29,7 +29,7 @@
         }
 
         .fontStyleNormal {
-            font-style: normal 
+            font-style: normal
         }
 
         .fontUnderLine {
@@ -51,9 +51,9 @@
             var task = new Ext.util.DelayedTask(function () {
                 Ext.Msg.alert('Done', "success");
             });
-            var boldCount = 0;
-            var italicCount = 0;
-            var underLineCount = 0;
+            var bold = true;
+            var italic = true;
+            var underLine = true;
             var fontColor = '';
             var styleButton = new Ext.Toolbar.SplitButton({
                 text: 'styleButton',
@@ -62,26 +62,26 @@
                 menu: {
                     items: [{
                         text: '<b>Bold</b>', handler: function () {
-                            if (boldCount === 0) {
-                                blogTextCmp.addClass("fontBold"); boldCount = 1
+                            if (bold === true) {
+                                blogTextCmp.addClass("fontBold"); bold = false
                             } else {
-                                blogTextCmp.addClass("fontNormal"); boldCount = 0;
+                                blogTextCmp.addClass("fontNormal"); bold = true;
                             }
                         }
                     }, {
                         text: '<i>Italic</i>', handler: function () {
-                            if (italicCount === 0) {
-                                blogTextCmp.addClass("fontStyle"); italicCount = 1
+                            if (italic === true) {
+                                blogTextCmp.addClass("fontStyle"); italic = false
                             } else {
-                                blogTextCmp.addClass("fontStyleNormal"); italicCount = 0;
+                                blogTextCmp.addClass("fontStyleNormal"); italic = true;
                             }
                         }
                     }, {
                         text: '<u>Underline</u>', handler: function () {
-                            if (underLineCount === 0) {
-                                blogTextCmp.addClass("fontUnderLine"); underLineCount = 1
+                            if (underLine === true) {
+                                blogTextCmp.addClass("fontUnderLine"); underLine = false
                             } else {
-                                blogTextCmp.addClass("fontUnderLineMormal"); underLineCount = 0;
+                                blogTextCmp.addClass("fontUnderLineMormal"); underLine = true;
                             }
                         }
                     }, '-', {
@@ -142,20 +142,20 @@
                         }]
                 },
                 {
-                    xtype: 'textarea',
-                    trackResetOnLoad: true,
-                    id: 'blogText',
-                    anchor: '100% 50%',
-                    listeners: {
-                        blur: function (field) {
-                            let blogContent = field.getValue().trim();
-                            if (Ext.isEmpty(blogContent)) {
-                                replyComponent.setDisabled(true);
-                            } else {
-                                replyComponent.setDisabled(false);
-                            }
+                        xtype: 'textarea',
+                        // trackResetOnLoad: true,
+                        anchor: '100% 50%',
+                        id: 'blogText',
+                        listeners: {
+                            blur: function (field) {
+                                let blogContent = field.getValue().trim();
+                                if (Ext.isEmpty(blogContent)) {
+                                    replyComponent.setDisabled(true);
+                                } else {
+                                    replyComponent.setDisabled(false);
+                                }
+                            },
                         }
-                    }
                 }, {
                     xtype: 'panel',
                     anchor: '100% 50%',
@@ -205,13 +205,16 @@
                 '</table>'
             );
             function insertXTpl() {
+                console.log(tpl1);
                 tpl1.append(Ext.get("tableInfo"), data);
-                tpl1.append("blogText", data);
+                let resetDom = Ext.getDom('blogText');
+                resetDom.value =  resetDom.value+tpl1.html;
             }
             function reset() {
                 let tableDom = Ext.getDom("tableInfo");
                 let resetDom = Ext.getDom('blogText');
                 resetDom.value = '';
+                resetDom.innerText='';
                 tableDom.innerHTML = '';
                 replyComponent.setDisabled(true);
             }
