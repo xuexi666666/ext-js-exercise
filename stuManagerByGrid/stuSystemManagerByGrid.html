@@ -14,6 +14,53 @@
                 ['0', 'male'],
                 ['1', 'female'],
             ];
+            var stuForm = new Ext.Window({
+                layout: 'form',
+                plain: true,
+                width:500,
+                height:300,
+                autoScroll:true,
+                closeAction:'hide',
+                items: [{
+                    xtype: 'form',
+                    defaultType: 'textfield',
+                    labelSeparator: '<font style="color:red">*</font>',
+                    labelWidth: 50,
+                    frame: true,
+                    defaults: {
+                        msgTarget: 'under',
+                        allowBlank: false,
+                        blankText: '数据不能为空',
+                    },
+                    items: [{
+                        fieldLabel:'姓名',
+                    },
+                    {
+                        fieldLabel:'班级',
+                    },
+                    {
+                        fieldLabel:'性别',
+                    },
+                    {
+                        fieldLabel:'年龄',
+                    },
+                    {
+                        fieldLabel:'生日',
+                    },
+                    {
+                        fieldLabel:'头像',
+                    },]
+                }],
+                buttons: [{
+                    text:'Submit',
+                    disabled:true
+                },{
+                    text: 'Close',
+                    handler: function(){
+                        stuForm.hide();
+                    }
+                }]
+            });
             var cm = new Ext.grid.ColumnModel([
                 new Ext.grid.RowNumberer()
                 , {
@@ -120,6 +167,7 @@
                 tbar: new Ext.Toolbar(['-', {
                     text: '添加学生信息',
                     handler: function () {
+                        stuForm.show();
                         var initValue = { name: '', class: '', sex: '', age: '', birthday: '', avatar: '' };
                         var p = new Record(initValue);
                         grid.stopEditing();
