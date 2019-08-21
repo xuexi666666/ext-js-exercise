@@ -11,6 +11,7 @@
         Ext.onReady(function () {
             Ext.QuickTips.init();
             var insertPosition = 0;
+            var selectRowId = [];
             var comboData = [
                 ['0', 'male'],
                 ['1', 'female'],
@@ -249,27 +250,19 @@
                     handler: function () {
                         stuForm.show();
                     }
-                }, '-', {
-                        text: '删除学生信息',
-                        handler: function () {
+                }, '-',{
+                        text: '删除学生信息', handler: function () {
                             Ext.Msg.confirm('提示', '是否要删除', function (btn) {
                                 if (btn == 'yes') {
-                                    var sm = grid.getSelectionModel();
-                                    var cell = sm.getSelectedCell();
-                                    var record = store.getAt(cell[0]);
-                                    store.remove(record);
+                                    let selectionRows = sm2.getSelections();
+                                    if (Ext.isEmpty(selectionRows)) {
+                                        return;
+                                    }
+                                    selectionRows.forEach(item => {
+                                        store.remove(item)
+                                    });
                                 }
                             });
-                        }
-                    }, '-', {
-                        text: 'remove select', handler: function () {
-                            let selectionRows = sm2.getSelections();
-                            if (Ext.isEmpty(selectionRows)) {
-                                return;
-                            }
-                            selectionRows.forEach(item => {
-                                store.remove(item)
-                            })
                         },
                     }]),
                 listeners: {
